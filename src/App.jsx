@@ -20,7 +20,7 @@ function ProtectedRoute({ children, allowedRoles }) {
   }
   
   if (allowedRoles && !allowedRoles.includes(user.role)) {
-    return <Navigate to={user.role === 'admin' ? '/admin' : '/client'} replace />;
+    return <Navigate to={user.role === 'admin' ? '/admin' : '/admin'} replace />;
   }
   
   return children;
@@ -35,7 +35,7 @@ function AppRoutes() {
         path="/login" 
         element={
           isAuthenticated ? 
-            <Navigate to={user.role === 'admin' ? '/admin' : '/client'} replace /> : 
+            <Navigate to={user.role === 'admin' ? '/admin' : '/admin'} replace /> : 
             <Login />
         } 
       />
