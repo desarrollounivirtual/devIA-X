@@ -8,7 +8,7 @@ import { motion } from 'framer-motion';
 import { Users, CreditCard, AlertTriangle, FileText, DollarSign, BarChart } from 'lucide-react';
 import Layout from '@/components/Layout';
 import { useData } from '@/contexts/DataContext';
-import { getCreditStatus } from '@/lib/creditUtil';
+import { getCreditStatus } from '@/lib/creditUtils';
 
 const AdminDashboard = () => {
     const { logout } = useAuth();
