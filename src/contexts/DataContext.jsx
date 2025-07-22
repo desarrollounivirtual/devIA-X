@@ -23,10 +23,10 @@ export const DataProvider = ({ children }) => {
   }, []);
 
   const fetchAllData = async () => {
-    const { data: usersData } = await supabase.from('users').select('*');
-    const { data: productsData } = await supabase.from('products').select('*');
-    const { data: creditsData } = await supabase.from('credits').select('*');
-    const { data: paymentsData } = await supabase.from('payments').select('*');
+    const { data: usersData } = await supabase.from('clientes').select('*');
+    const { data: productsData } = await supabase.from('productos').select('*');
+    const { data: creditsData } = await supabase.from('creditos').select('*');
+    const { data: paymentsData } = await supabase.from('pagos').select('*');
 
     setUsers(usersData || []);
     setProducts(productsData || []);
@@ -39,34 +39,34 @@ export const DataProvider = ({ children }) => {
       ...userData,
       joinDate: new Date().toISOString()
     };
-    const { data, error } = await supabase.from('users').insert(newUser).select();
+    const { data, error } = await supabase.from('clientes').insert(newUser).select();
     if (!error) setUsers(prev => [...prev, ...data]);
     return data?.[0];
   };
 
   const updateUser = async (id, userData) => {
-    const { data } = await supabase.from('users').update(userData).eq('id', id).select();
+    const { data } = await supabase.from('clientes').update(userData).eq('id', id).select();
     if (data) setUsers(prev => prev.map(u => u.id === id ? data[0] : u));
   };
 
   const deleteUser = async (id) => {
-    await supabase.from('users').delete().eq('id', id);
+    await supabase.from('clientes').delete().eq('id', id);
     setUsers(prev => prev.filter(u => u.id !== id));
   };
 
   const addProduct = async (productData) => {
-    const { data, error } = await supabase.from('products').insert(productData).select();
+    const { data, error } = await supabase.from('productos').insert(productData).select();
     if (!error) setProducts(prev => [...prev, ...data]);
     return data?.[0];
   };
 
   const updateProduct = async (id, productData) => {
-    const { data } = await supabase.from('products').update(productData).eq('id', id).select();
+    const { data } = await supabase.from('productos').update(productData).eq('id', id).select();
     if (data) setProducts(prev => prev.map(p => p.id === id ? data[0] : p));
   };
 
   const deleteProduct = async (id) => {
-    await supabase.from('products').delete().eq('id', id);
+    await supabase.from('productos').delete().eq('id', id);
     setProducts(prev => prev.filter(p => p.id !== id));
   };
 
@@ -98,13 +98,13 @@ export const DataProvider = ({ children }) => {
       createdDate: new Date().toISOString()
     };
 
-    const { data, error } = await supabase.from('credits').insert(newCredit).select();
+    const { data, error } = await supabase.from('creditos').insert(newCredit).select();
     if (!error) setCredits(prev => [...prev, ...data]);
     return data?.[0];
   };
 
   const updateCredit = async (id, creditData) => {
-    const { data } = await supabase.from('credits').update(creditData).eq('id', id).select();
+    const { data } = await supabase.from('creditos').update(creditData).eq('id', id).select();
     if (data) setCredits(prev => prev.map(c => c.id === id ? data[0] : c));
   };
 
@@ -114,7 +114,7 @@ export const DataProvider = ({ children }) => {
       date: new Date().toISOString()
     };
 
-    const { data, error } = await supabase.from('payments').insert(newPayment).select();
+    const { data, error } = await supabase.from('pagos').insert(newPayment).select();
     if (error) return null;
     const payment = data[0];
 
@@ -134,7 +134,7 @@ export const DataProvider = ({ children }) => {
       return inst;
     });
 
-    await supabase.from('credits')
+    await supabase.from('creditos')
       .update({ paymentPlan: updatedPaymentPlan })
       .eq('id', credit.id);
 
