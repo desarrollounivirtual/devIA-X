@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet';
 import Layout from '@/components/Layout';
@@ -8,11 +8,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/components/ui/use-toast';
-import { 
-  Users, 
-  Plus, 
-  Edit, 
-  Trash2, 
+import {
+  Users,
+  Plus,
+  Edit,
+  Trash2,
   Search,
   UserCheck,
   UserX,
@@ -20,14 +20,30 @@ import {
   Phone
 } from 'lucide-react';
 import { UserFormDialog } from '@/components/users/UserFormDialog';
+import { supabase } from '@/lib/supabaseClient'; // 👈 Asegúrate de tener esta importación
 
 const UsersManagement = () => {
-  const { clientes, addUser, updateUser, deleteUser } = useData(); //"clientes" en vez de "users"
+  const { addUser, updateUser, deleteUser } = useData(); // no obtenemos clientes del context
   const { toast } = useToast();
+  const [clientes, setClientes] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterRole, setFilterRole] = useState('all');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
+
+  // 🔧 Cargar clientes desde Supabase
+  useEffect(() => {
+    const fetchClientes = async () => {
+      const { data, error } = await supabase.from('clientes').select('*');
+      if (error) {
+        console.error('Error al cargar clientes:', error.message);
+      } else {
+        setClientes(data);
+      }
+    };
+
+    fetchClientes();
+  }, []);
 
   const filteredUsers = clientes.filter(user => {
     const matchesSearch =
@@ -49,8 +65,9 @@ const UsersManagement = () => {
     setIsDialogOpen(true);
   };
 
-  const handleDelete = (userId) => {
-    deleteUser(userId);
+  const handleDelete = async (userId) => {
+    await deleteUser(userId);
+    setClientes(prev => prev.filter(user => user.id !== userId));
     toast({
       title: "Usuario eliminado",
       description: "El usuario ha sido eliminado correctamente.",
@@ -69,7 +86,7 @@ const UsersManagement = () => {
         <title>Gestión de Usuarios - Sistema de Gestión de Crédito</title>
         <meta name="description" content="Administra usuarios del sistema de gestión de crédito y cartera" />
       </Helmet>
-      
+
       <Layout title="Gestión de Usuarios">
         <div className="space-y-6">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -94,7 +111,7 @@ const UsersManagement = () => {
                 </SelectContent>
               </Select>
             </div>
-            
+
             <div className="flex space-x-2">
               <Button onClick={handleExport} variant="outline" className="border-white/20 hover:bg-white/10 text-white">
                 Exportar
@@ -208,9 +225,9 @@ const UsersManagement = () => {
             </Card>
           </motion.div>
         </div>
-        <UserFormDialog 
-          isOpen={isDialogOpen} 
-          onOpenChange={setIsDialogOpen} 
+        <UserFormDialog
+          isOpen={isDialogOpen}
+          onOpenChange={setIsDialogOpen}
           editingUser={editingUser}
           addUser={addUser}
           updateUser={updateUser}
