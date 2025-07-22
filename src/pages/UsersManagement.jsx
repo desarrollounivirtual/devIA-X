@@ -22,7 +22,7 @@ import {
 import { UserFormDialog } from '@/components/users/UserFormDialog';
 
 const UsersManagement = () => {
-  const { clientes, addUser, updateUser, deleteUser } = useData(); // usamos "clientes" en vez de "users"
+  const { clientes, addUser, updateUser, deleteUser } = useData(); //"clientes" en vez de "users"
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterRole, setFilterRole] = useState('all');
