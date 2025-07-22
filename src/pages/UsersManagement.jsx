@@ -49,6 +49,7 @@ const UsersManagement = () => {
     const matchesSearch =
       (user?.nombre_completo || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
       (user?.correo_electronico || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (user?.grupo || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
       (user?.cedula || '').includes(searchTerm);
 
     const matchesRole = filterRole === 'all' || user.role === filterRole;
