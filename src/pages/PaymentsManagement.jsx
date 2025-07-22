@@ -40,7 +40,7 @@ const PaymentsManagement = () => {
     const matchesSearch = client?.nombre_completo?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                           client?.cedula?.includes(searchTerm) ||
                           payment.credito_id?.includes(searchTerm) ||
-                          payment.installmentNumber?.toString().includes(searchTerm);
+                          payment.estado_pago?.toString().includes(searchTerm);
 
     const matchesDate = !filterDate || payment.date?.startsWith(filterDate);
 
