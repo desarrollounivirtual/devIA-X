@@ -34,9 +34,9 @@ const ProductsManagement = () => {
   });
 
   const filteredProducts = products.filter(product =>
-    product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    product.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    product.description.toLowerCase().includes(searchTerm.toLowerCase())
+    product.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    product.categoria.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    product.descripcion.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const formatCurrency = (amount) => {
