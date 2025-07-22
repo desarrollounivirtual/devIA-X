@@ -1,7 +1,0 @@
-{
-  "rewrites": [
-    { "source": "/admin(/.*)?", "destination": "/" },
-    { "source": "/client(/.*)?", "destination": "/" }
-  ]
-}
-
