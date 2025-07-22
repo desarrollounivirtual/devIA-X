@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
-import { 
-  LogOut, 
-  Users, 
-  Package, 
-  CreditCard, 
-  DollarSign, 
+import {
+  LogOut,
+  Users,
+  Package,
+  CreditCard,
+  DollarSign,
   BarChart3,
   Menu,
   X
@@ -18,6 +18,15 @@ const Layout = ({ children, title }) => {
   const { user, logout } = useAuth();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // 🚧 Previene renderizado antes de que el usuario esté cargado
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-white">
+        Cargando sesión...
+      </div>
+    );
+  }
 
   const adminMenuItems = [
     { icon: BarChart3, label: 'Dashboard', path: '/admin' },
@@ -44,7 +53,7 @@ const Layout = ({ children, title }) => {
         </Button>
       </div>
 
-      {user.role === 'admin' && (
+      {user?.role === 'admin' && (
         <motion.aside
           initial={{ x: -300 }}
           animate={{ x: sidebarOpen || window.innerWidth >= 1024 ? 0 : -300 }}
@@ -53,20 +62,20 @@ const Layout = ({ children, title }) => {
           <div className="p-6">
             <h2 className="text-xl font-bold gradient-text">Sistema de Crédito</h2>
           </div>
-          
+
           <nav className="px-4 space-y-2">
             {adminMenuItems.map((item) => {
               const Icon = item.icon;
               const isActive = location.pathname === item.path;
-              
+
               return (
                 <Link
                   key={item.path}
                   to={item.path}
                   onClick={() => setSidebarOpen(false)}
                   className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all ${
-                    isActive 
-                      ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30' 
+                    isActive
+                      ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30'
                       : 'hover:bg-white/5 text-gray-300 hover:text-white'
                   }`}
                 >
@@ -76,11 +85,11 @@ const Layout = ({ children, title }) => {
               );
             })}
           </nav>
-          
+
           <div className="absolute bottom-6 left-4 right-4">
             <div className="glass-card p-4 rounded-lg">
-              <p className="text-sm text-gray-200 mb-2">{user.name}</p>
-              <p className="text-xs text-gray-400 mb-3">{user.email}</p>
+              <p className="text-sm text-gray-200 mb-2">{user?.name}</p>
+              <p className="text-xs text-gray-400 mb-3">{user?.email}</p>
               <Button
                 variant="outline"
                 size="sm"
@@ -95,18 +104,18 @@ const Layout = ({ children, title }) => {
         </motion.aside>
       )}
 
-      <main className={`${user.role === 'admin' ? 'lg:ml-64' : ''} min-h-screen`}>
+      <main className={`${user?.role === 'admin' ? 'lg:ml-64' : ''} min-h-screen`}>
         <header className="glass-card border-b border-white/10 p-4 lg:p-6">
           <div className="flex items-center justify-between">
-            <div className={user.role === 'admin' ? 'lg:ml-0 ml-12' : ''}>
+            <div className={user?.role === 'admin' ? 'lg:ml-0 ml-12' : ''}>
               <h1 className="text-2xl font-bold text-white">{title}</h1>
             </div>
-            
-            {user.role === 'client' && (
+
+            {user?.role === 'client' && (
               <div className="flex items-center space-x-4">
                 <div className="text-right">
-                  <p className="text-sm text-gray-200">{user.name}</p>
-                  <p className="text-xs text-gray-400">{user.email}</p>
+                  <p className="text-sm text-gray-200">{user?.name}</p>
+                  <p className="text-xs text-gray-400">{user?.email}</p>
                 </div>
                 <Button
                   variant="outline"
@@ -122,9 +131,7 @@ const Layout = ({ children, title }) => {
           </div>
         </header>
 
-        <div className="p-4 lg:p-6">
-          {children}
-        </div>
+        <div className="p-4 lg:p-6">{children}</div>
       </main>
 
       {sidebarOpen && (
