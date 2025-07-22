@@ -19,7 +19,6 @@ const Layout = ({ children, title }) => {
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // 🚧 Previene renderizado antes de que el usuario esté cargado
   if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center text-white">
@@ -28,7 +27,7 @@ const Layout = ({ children, title }) => {
     );
   }
 
-  const adminMenuItems = [
+  const menuItems = [
     { icon: BarChart3, label: 'Dashboard', path: '/admin' },
     { icon: Users, label: 'Usuarios', path: '/admin/users' },
     { icon: Package, label: 'Productos', path: '/admin/products' },
@@ -53,81 +52,78 @@ const Layout = ({ children, title }) => {
         </Button>
       </div>
 
-      {user?.role === 'admin' && (
-        <motion.aside
-          initial={{ x: -300 }}
-          animate={{ x: sidebarOpen || window.innerWidth >= 1024 ? 0 : -300 }}
-          className="fixed left-0 top-0 h-full w-64 glass-card border-r border-white/10 z-40 lg:translate-x-0"
-        >
-          <div className="p-6">
-            <h2 className="text-xl font-bold gradient-text">Sistema de Crédito</h2>
+      {/* Menú siempre visible si hay usuario */}
+      <motion.aside
+        initial={{ x: -300 }}
+        animate={{ x: sidebarOpen || window.innerWidth >= 1024 ? 0 : -300 }}
+        className="fixed left-0 top-0 h-full w-64 glass-card border-r border-white/10 z-40 lg:translate-x-0"
+      >
+        <div className="p-6">
+          <h2 className="text-xl font-bold gradient-text">Sistema de Crédito</h2>
+        </div>
+
+        <nav className="px-4 space-y-2">
+          {menuItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = location.pathname === item.path;
+
+            return (
+              <Link
+                key={item.path}
+                to={item.path}
+                onClick={() => setSidebarOpen(false)}
+                className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all ${
+                  isActive
+                    ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30'
+                    : 'hover:bg-white/5 text-gray-300 hover:text-white'
+                }`}
+              >
+                <Icon className="h-5 w-5" />
+                <span>{item.label}</span>
+              </Link>
+            );
+          })}
+        </nav>
+
+        <div className="absolute bottom-6 left-4 right-4">
+          <div className="glass-card p-4 rounded-lg">
+            <p className="text-sm text-gray-200 mb-2">{user?.name}</p>
+            <p className="text-xs text-gray-400 mb-3">{user?.email}</p>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleLogout}
+              className="w-full text-white border-white/20 hover:bg-white/10"
+            >
+              <LogOut className="h-4 w-4 mr-2" />
+              Cerrar Sesión
+            </Button>
           </div>
+        </div>
+      </motion.aside>
 
-          <nav className="px-4 space-y-2">
-            {adminMenuItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = location.pathname === item.path;
+      <main className="min-h-screen lg:ml-64">
+        <header className="glass-card border-b border-white/10 p-4 lg:p-6">
+          <div className="flex items-center justify-between">
+            <div className="lg:ml-0 ml-12">
+              <h1 className="text-2xl font-bold text-white">{title}</h1>
+            </div>
 
-              return (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  onClick={() => setSidebarOpen(false)}
-                  className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all ${
-                    isActive
-                      ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30'
-                      : 'hover:bg-white/5 text-gray-300 hover:text-white'
-                  }`}
-                >
-                  <Icon className="h-5 w-5" />
-                  <span>{item.label}</span>
-                </Link>
-              );
-            })}
-          </nav>
-
-          <div className="absolute bottom-6 left-4 right-4">
-            <div className="glass-card p-4 rounded-lg">
-              <p className="text-sm text-gray-200 mb-2">{user?.name}</p>
-              <p className="text-xs text-gray-400 mb-3">{user?.email}</p>
+            <div className="flex items-center space-x-4">
+              <div className="text-right">
+                <p className="text-sm text-gray-200">{user?.name}</p>
+                <p className="text-xs text-gray-400">{user?.email}</p>
+              </div>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={handleLogout}
-                className="w-full text-white border-white/20 hover:bg-white/10"
+                className="text-white border-white/20 hover:bg-white/10"
               >
                 <LogOut className="h-4 w-4 mr-2" />
                 Cerrar Sesión
               </Button>
             </div>
-          </div>
-        </motion.aside>
-      )}
-
-      <main className={`${user?.role === 'admin' ? 'lg:ml-64' : ''} min-h-screen`}>
-        <header className="glass-card border-b border-white/10 p-4 lg:p-6">
-          <div className="flex items-center justify-between">
-            <div className={user?.role === 'admin' ? 'lg:ml-0 ml-12' : ''}>
-              <h1 className="text-2xl font-bold text-white">{title}</h1>
-            </div>
-
-            {user?.role === 'client' && (
-              <div className="flex items-center space-x-4">
-                <div className="text-right">
-                  <p className="text-sm text-gray-200">{user?.name}</p>
-                  <p className="text-xs text-gray-400">{user?.email}</p>
-                </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleLogout}
-                  className="text-white border-white/20 hover:bg-white/10"
-                >
-                  <LogOut className="h-4 w-4 mr-2" />
-                  Cerrar Sesión
-                </Button>
-              </div>
-            )}
           </div>
         </header>
 
