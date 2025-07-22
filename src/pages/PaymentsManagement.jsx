@@ -37,9 +37,9 @@ const PaymentsManagement = () => {
     const credit = credits.find(c => c.id === payment.creditId);
     const client = users.find(u => u.id === credit?.clientId);
 
-    const matchesSearch = client?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    const matchesSearch = client?.nombre_completo?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                           client?.cedula?.includes(searchTerm) ||
-                          payment.creditId?.includes(searchTerm) ||
+                          payment.credito_id?.includes(searchTerm) ||
                           payment.installmentNumber?.toString().includes(searchTerm);
 
     const matchesDate = !filterDate || payment.date?.startsWith(filterDate);
