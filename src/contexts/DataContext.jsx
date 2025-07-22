@@ -11,7 +11,7 @@ export const useData = () => {
 };
 
 export const DataProvider = ({ children }) => {
-  const [users, setUsers] = useState([]);
+  const [clientes, setClientes] = useState([]);
   const [products, setProducts] = useState([]);
   const [credits, setCredits] = useState([]);
   const [payments, setPayments] = useState([]);
@@ -22,46 +22,51 @@ export const DataProvider = ({ children }) => {
 
   const fetchAllData = async () => {
     try {
-      const { data: usersData, error: usersError } = await supabase.from('users').select('*');
+      const { data: clientesData, error: clientesError } = await supabase.from('clientes').select('*');
       const { data: productsData, error: productsError } = await supabase.from('products').select('*');
       const { data: creditsData, error: creditsError } = await supabase.from('credits').select('*');
       const { data: paymentsData, error: paymentsError } = await supabase.from('payments').select('*');
 
-      if (usersError) console.error('Error fetching users:', usersError);
+      if (clientesError) console.error('Error fetching clientes:', clientesError);
       if (productsError) console.error('Error fetching products:', productsError);
       if (creditsError) console.error('Error fetching credits:', creditsError);
       if (paymentsError) console.error('Error fetching payments:', paymentsError);
 
-      setUsers(usersData || []);
+      setClientes(clientesData || []);
       setProducts(productsData || []);
       setCredits(creditsData || []);
       setPayments(paymentsData || []);
+
+      // Verificación visual en consola
+      console.log('Clientes:', clientesData);
+      console.log('Productos:', productsData);
+      console.log('Créditos:', creditsData);
+      console.log('Pagos:', paymentsData);
     } catch (error) {
       console.error('Unexpected error:', error);
     }
   };
 
-  const addUser = async (userData) => {
-    const newUser = { ...userData, joinDate: new Date().toISOString() };
-    const { data, error } = await supabase.from('users').insert(newUser).select();
+  const addCliente = async (clienteData) => {
+    const { data, error } = await supabase.from('clientes').insert(clienteData).select();
     if (error) {
-      console.error('Error al agregar usuario:', error.message);
+      console.error('Error al agregar cliente:', error.message);
       return null;
     }
-    setUsers(prev => [...prev, ...data]);
+    setClientes(prev => [...prev, ...data]);
     return data[0];
   };
 
-  const updateUser = async (id, userData) => {
-    const { data, error } = await supabase.from('users').update(userData).eq('id', id).select();
-    if (error) return console.error('Error actualizando usuario:', error.message);
-    if (data) setUsers(prev => prev.map(u => u.id === id ? data[0] : u));
+  const updateCliente = async (id, clienteData) => {
+    const { data, error } = await supabase.from('clientes').update(clienteData).eq('id', id).select();
+    if (error) return console.error('Error actualizando cliente:', error.message);
+    if (data) setClientes(prev => prev.map(c => c.id === id ? data[0] : c));
   };
 
-  const deleteUser = async (id) => {
-    const { error } = await supabase.from('users').delete().eq('id', id);
-    if (error) return console.error('Error eliminando usuario:', error.message);
-    setUsers(prev => prev.filter(u => u.id !== id));
+  const deleteCliente = async (id) => {
+    const { error } = await supabase.from('clientes').delete().eq('id', id);
+    if (error) return console.error('Error eliminando cliente:', error.message);
+    setClientes(prev => prev.filter(c => c.id !== id));
   };
 
   const addProduct = async (productData) => {
@@ -169,7 +174,7 @@ export const DataProvider = ({ children }) => {
   };
 
   const getStats = () => {
-    const totalClients = users.length;
+    const totalClientes = clientes.length;
     const activeCredits = credits.filter(c => c.status === 'active').length;
 
     const today = new Date();
@@ -188,7 +193,7 @@ export const DataProvider = ({ children }) => {
     );
 
     return {
-      totalClients,
+      totalClientes,
       activeCredits,
       overdueCredits,
       totalPayments,
@@ -198,19 +203,19 @@ export const DataProvider = ({ children }) => {
   };
 
   const value = {
-    users,
-    products,
-    credits,
-    payments,
-    addUser,
-    updateUser,
-    deleteUser,
-    addProduct,
-    updateProduct,
-    deleteProduct,
-    addCredit,
-    updateCredit,
-    addPayment,
+    clientes,
+    productos,
+    creditos,
+    pagos,
+    addCliente,
+    updateCliente,
+    deleteCliente,
+    addProducto,
+    updateProducto,
+    deleteProducto,
+    addCredito,
+    updateCredito,
+    addPago,
     getStats
   };
 
