@@ -42,9 +42,9 @@ const CreditsManagement = () => {
     const creditStatus = getCreditStatus(credit);
 
     const matchesSearch =
-      client?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      client?.nombre_completo.toLowerCase().includes(searchTerm.toLowerCase()) ||
       client?.cedula.includes(searchTerm) ||
-      product?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product?.nombre_completo.toLowerCase().includes(searchTerm.toLowerCase()) ||
       credit.id.includes(searchTerm);
 
     const matchesStatus =
