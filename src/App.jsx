@@ -13,8 +13,8 @@ import ProductsManagement from '@/pages/ProductsManagement';
 import CreditsManagement from '@/pages/CreditsManagement';
 import PaymentsManagement from '@/pages/PaymentsManagement';
 
-function ProtectedRoute({ children, allowedRoles }) {
-  const { user, isAuthenticated, loading } = useAuth();
+function ProtectedRoute({ children }) {
+  const { isAuthenticated, loading } = useAuth();
 
   if (loading) return null;
 
@@ -22,15 +22,11 @@ function ProtectedRoute({ children, allowedRoles }) {
     return <Navigate to="/login" replace />;
   }
 
-  if (allowedRoles && !allowedRoles.includes(user?.role)) {
-    return <Navigate to={user?.role === 'admin' ? '/admin' : '/client'} replace />;
-  }
-
   return children;
 }
 
 function AppRoutes() {
-  const { isAuthenticated, user, loading } = useAuth();
+  const { isAuthenticated, loading } = useAuth();
 
   if (loading) return null;
 
@@ -40,7 +36,7 @@ function AppRoutes() {
         path="/login"
         element={
           isAuthenticated
-            ? <Navigate to={user?.role === 'admin' ? '/admin' : '/client'} replace />
+            ? <Navigate to="/admin" replace />
             : <Login />
         }
       />
@@ -48,7 +44,7 @@ function AppRoutes() {
       <Route
         path="/admin"
         element={
-          <ProtectedRoute allowedRoles={['admin']}>
+          <ProtectedRoute>
             <AdminDashboard />
           </ProtectedRoute>
         }
@@ -57,7 +53,7 @@ function AppRoutes() {
       <Route
         path="/admin/users"
         element={
-          <ProtectedRoute allowedRoles={['admin']}>
+          <ProtectedRoute>
             <UsersManagement />
           </ProtectedRoute>
         }
@@ -66,7 +62,7 @@ function AppRoutes() {
       <Route
         path="/admin/products"
         element={
-          <ProtectedRoute allowedRoles={['admin']}>
+          <ProtectedRoute>
             <ProductsManagement />
           </ProtectedRoute>
         }
@@ -75,7 +71,7 @@ function AppRoutes() {
       <Route
         path="/admin/credits"
         element={
-          <ProtectedRoute allowedRoles={['admin']}>
+          <ProtectedRoute>
             <CreditsManagement />
           </ProtectedRoute>
         }
@@ -84,7 +80,7 @@ function AppRoutes() {
       <Route
         path="/admin/payments"
         element={
-          <ProtectedRoute allowedRoles={['admin']}>
+          <ProtectedRoute>
             <PaymentsManagement />
           </ProtectedRoute>
         }
@@ -93,7 +89,7 @@ function AppRoutes() {
       <Route
         path="/client"
         element={
-          <ProtectedRoute allowedRoles={['client']}>
+          <ProtectedRoute>
             <ClientDashboard />
           </ProtectedRoute>
         }
@@ -102,11 +98,7 @@ function AppRoutes() {
       <Route
         path="/"
         element={
-          <Navigate to={
-            isAuthenticated
-              ? (user?.role === 'admin' ? '/admin' : '/client')
-              : '/login'
-          } replace />
+          <Navigate to={isAuthenticated ? "/admin" : "/login"} replace />
         }
       />
     </Routes>
