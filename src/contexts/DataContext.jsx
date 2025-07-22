@@ -147,7 +147,7 @@ export const DataProvider = ({ children }) => {
   };
 
   const getStats = () => {
-    const totalClients = users.filter(u => u.role === 'client').length;
+    const totalClients = users.length;
     const activeCredits = credits.filter(c => c.status === 'active').length;
 
     const today = new Date();
