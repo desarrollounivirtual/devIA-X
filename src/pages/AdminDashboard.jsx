@@ -33,7 +33,8 @@ const AdminDashboard = () => {
         }).format(amount);
     };
 
-    const totalClients = users.filter(u => u?.role === 'client').length;
+    // ✅ Total de usuarios registrados como clientes (sin roles)
+    const totalClients = users.length;
     const activeCredits = credits.length;
     const overdueCredits = credits.filter(c => getCreditStatus(c).status === 'overdue').length;
     const totalPayments = payments.length;
