@@ -95,7 +95,7 @@ const UsersManagement = () => {
               <div className="relative flex-1 max-w-md">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                 <Input
-                  placeholder="Buscar por nombre, email o cédula..."
+                  placeholder="Buscar por nombre, email o cédula, grupo..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-gray-400"
@@ -107,8 +107,6 @@ const UsersManagement = () => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Todos</SelectItem>
-                  <SelectItem value="admin">Administradores</SelectItem>
-                  <SelectItem value="client">Clientes</SelectItem>
                 </SelectContent>
               </Select>
             </div>
