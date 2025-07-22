@@ -37,26 +37,27 @@ const CreditsManagement = () => {
   };
 
   const filteredCredits = credits.filter(credit => {
-    const client = users.find(u => u.id === credit.clientId);
-    const product = products.find(p => p.id === credit.productId);
-    const creditStatus = getCreditStatus(credit);
+  const client = users.find(u => u.id === credit.clientId);
+  const product = products.find(p => p.id === credit.productId);
+  const creditStatus = getCreditStatus(credit);
 
-    const matchesSearch =
-      client?.nombre_completo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      client?.cedula.includes(searchTerm) ||
-      product?.nombre_completo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      credit.id.includes(searchTerm);
+  const matchesSearch =
+    (client?.nombre_completo || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (client?.cedula || '').includes(searchTerm) ||
+    (product?.nombre_completo || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (credit.id || '').includes(searchTerm);
 
-    const matchesStatus =
-      filterStatus === 'all' || creditStatus.status === filterStatus;
+  const matchesStatus =
+    filterStatus === 'all' || creditStatus.status === filterStatus;
 
-    return matchesSearch && matchesStatus;
-  });
+  return matchesSearch && matchesStatus;
+});
 
-  const handleViewDetails = (credit) => {
-    setSelectedCredit(credit);
-    setIsDetailDialogOpen(true);
-  };
+const handleViewDetails = (credit) => {
+  setSelectedCredit(credit);
+  setIsDetailDialogOpen(true);
+};
+
 
   const handleExport = () => {
     toast({
