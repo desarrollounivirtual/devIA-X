@@ -33,12 +33,8 @@ const UsersManagement = () => {
   const matchesSearch =
     (client?.nombre_completo || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
     (client?.correo_electronico || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (client?.cedula || '').includes(searchTerm);
-
-  const matchesRole =
-    filterRole === 'all' || user?.role === filterRole;
-
-  return matchesSearch && matchesRole;
+    (client?.cedula || '').includes(searchTerm)
+    );
 });
 
 
