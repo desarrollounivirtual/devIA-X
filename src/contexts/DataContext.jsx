@@ -12,9 +12,9 @@ export const useData = () => {
 
 export const DataProvider = ({ children }) => {
   const [clientes, setClientes] = useState([]);
-  const [products, setProducts] = useState([]);
-  const [credits, setCredits] = useState([]);
-  const [payments, setPayments] = useState([]);
+  const [productos, setProducts] = useState([]);
+  const [creditos, setCredits] = useState([]);
+  const [pagos, setPayments] = useState([]);
 
   useEffect(() => {
     fetchAllData();
@@ -204,18 +204,18 @@ export const DataProvider = ({ children }) => {
 
   const value = {
     clientes,
-    productos,
-    creditos,
-    pagos,
+    products,
+    credits,
+    payments,
     addCliente,
     updateCliente,
     deleteCliente,
-    addProducto,
-    updateProducto,
-    deleteProducto,
-    addCredito,
-    updateCredito,
-    addPago,
+    addProduct,
+    updateProduct,
+    deleteProduct,
+    addCredit,
+    updateCredit,
+    addPayment,
     getStats
   };
 
