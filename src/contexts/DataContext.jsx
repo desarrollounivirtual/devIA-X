@@ -11,10 +11,10 @@ export const useData = () => {
 };
 
 export const DataProvider = ({ children }) => {
-  const [clientes, setClientes] = useState([]);
-  const [productos, setProducts] = useState([]);
-  const [creditos, setCredits] = useState([]);
-  const [pagos, setPayments] = useState([]);
+  const [clientes, setUsers] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [credits, setCredits] = useState([]);
+  const [payments, setPayments] = useState([]);
 
   useEffect(() => {
     fetchAllData();
@@ -22,55 +22,50 @@ export const DataProvider = ({ children }) => {
 
   const fetchAllData = async () => {
     try {
-      const { data: clientesData, error: clientesError } = await supabase.from('clientes').select('*');
-      const { data: productsData, error: productsError } = await supabase.from('products').select('*');
-      const { data: creditsData, error: creditsError } = await supabase.from('credits').select('*');
-      const { data: paymentsData, error: paymentsError } = await supabase.from('payments').select('*');
+      const { data: usersData, error: usersError } = await supabase.from('clientes').select('*');
+      const { data: productsData, error: productsError } = await supabase.from('productos').select('*');
+      const { data: creditsData, error: creditsError } = await supabase.from('creditos').select('*');
+      const { data: paymentsData, error: paymentsError } = await supabase.from('pagos').select('*');
 
-      if (clientesError) console.error('Error fetching clientes:', clientesError);
+      if (usersError) console.error('Error fetching users:', usersError);
       if (productsError) console.error('Error fetching products:', productsError);
       if (creditsError) console.error('Error fetching credits:', creditsError);
       if (paymentsError) console.error('Error fetching payments:', paymentsError);
 
-      setClientes(clientesData || []);
+      setUsers(usersData || []);
       setProducts(productsData || []);
       setCredits(creditsData || []);
       setPayments(paymentsData || []);
-
-      // Verificación visual en consola
-      console.log('Clientes:', clientesData);
-      console.log('Productos:', productsData);
-      console.log('Créditos:', creditsData);
-      console.log('Pagos:', paymentsData);
     } catch (error) {
       console.error('Unexpected error:', error);
     }
   };
 
-  const addCliente = async (clienteData) => {
-    const { data, error } = await supabase.from('clientes').insert(clienteData).select();
+  const addUser = async (userData) => {
+    const newUser = { ...userData, joinDate: new Date().toISOString() };
+    const { data, error } = await supabase.from('clientes').insert(newUser).select();
     if (error) {
-      console.error('Error al agregar cliente:', error.message);
+      console.error('Error al agregar usuario:', error.message);
       return null;
     }
-    setClientes(prev => [...prev, ...data]);
+    setUsers(prev => [...prev, ...data]);
     return data[0];
   };
 
-  const updateCliente = async (id, clienteData) => {
-    const { data, error } = await supabase.from('clientes').update(clienteData).eq('id', id).select();
-    if (error) return console.error('Error actualizando cliente:', error.message);
-    if (data) setClientes(prev => prev.map(c => c.id === id ? data[0] : c));
+  const updateUser = async (id, userData) => {
+    const { data, error } = await supabase.from('clientes').update(userData).eq('id', id).select();
+    if (error) return console.error('Error actualizando usuario:', error.message);
+    if (data) setUsers(prev => prev.map(u => u.id === id ? data[0] : u));
   };
 
-  const deleteCliente = async (id) => {
+  const deleteUser = async (id) => {
     const { error } = await supabase.from('clientes').delete().eq('id', id);
-    if (error) return console.error('Error eliminando cliente:', error.message);
-    setClientes(prev => prev.filter(c => c.id !== id));
+    if (error) return console.error('Error eliminando usuario:', error.message);
+    setUsers(prev => prev.filter(u => u.id !== id));
   };
 
   const addProduct = async (productData) => {
-    const { data, error } = await supabase.from('products').insert(productData).select();
+    const { data, error } = await supabase.from('productos').insert(productData).select();
     if (error) {
       console.error('Error al agregar producto:', error.message);
       return null;
@@ -80,13 +75,13 @@ export const DataProvider = ({ children }) => {
   };
 
   const updateProduct = async (id, productData) => {
-    const { data, error } = await supabase.from('products').update(productData).eq('id', id).select();
+    const { data, error } = await supabase.from('productos').update(productData).eq('id', id).select();
     if (error) return console.error('Error actualizando producto:', error.message);
     if (data) setProducts(prev => prev.map(p => p.id === id ? data[0] : p));
   };
 
   const deleteProduct = async (id) => {
-    const { error } = await supabase.from('products').delete().eq('id', id);
+    const { error } = await supabase.from('productos').delete().eq('id', id);
     if (error) return console.error('Error eliminando producto:', error.message);
     setProducts(prev => prev.filter(p => p.id !== id));
   };
@@ -124,7 +119,7 @@ export const DataProvider = ({ children }) => {
       createdDate: new Date().toISOString()
     };
 
-    const { data, error } = await supabase.from('credits').insert(newCredit).select();
+    const { data, error } = await supabase.from('creditos').insert(newCredit).select();
     if (error) {
       console.error('Error al agregar crédito:', error.message);
       return null;
@@ -135,7 +130,7 @@ export const DataProvider = ({ children }) => {
   };
 
   const updateCredit = async (id, creditData) => {
-    const { data, error } = await supabase.from('credits').update(creditData).eq('id', id).select();
+    const { data, error } = await supabase.from('creditos').update(creditData).eq('id', id).select();
     if (error) return console.error('Error actualizando crédito:', error.message);
     if (data) setCredits(prev => prev.map(c => c.id === id ? data[0] : c));
   };
@@ -143,7 +138,7 @@ export const DataProvider = ({ children }) => {
   const addPayment = async (paymentData) => {
     const newPayment = { ...paymentData, date: new Date().toISOString() };
 
-    const { data, error } = await supabase.from('payments').insert(newPayment).select();
+    const { data, error } = await supabase.from('pagos').insert(newPayment).select();
     if (error) return console.error('Error agregando pago:', error.message);
     const payment = data[0];
 
@@ -163,7 +158,7 @@ export const DataProvider = ({ children }) => {
       return inst;
     });
 
-    await supabase.from('credits')
+    await supabase.from('creditos')
       .update({ paymentPlan: updatedPaymentPlan })
       .eq('id', credit.id);
 
@@ -174,7 +169,7 @@ export const DataProvider = ({ children }) => {
   };
 
   const getStats = () => {
-    const totalClientes = clientes.length;
+    const totalClients = users.length;
     const activeCredits = credits.filter(c => c.status === 'active').length;
 
     const today = new Date();
@@ -193,7 +188,7 @@ export const DataProvider = ({ children }) => {
     );
 
     return {
-      totalClientes,
+      totalClients,
       activeCredits,
       overdueCredits,
       totalPayments,
@@ -203,13 +198,13 @@ export const DataProvider = ({ children }) => {
   };
 
   const value = {
-    clientes,
+    users,
     products,
     credits,
     payments,
-    addCliente,
-    updateCliente,
-    deleteCliente,
+    addUser,
+    updateUser,
+    deleteUser,
     addProduct,
     updateProduct,
     deleteProduct,
