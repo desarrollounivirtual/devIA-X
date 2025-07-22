@@ -81,9 +81,9 @@ export const UserFormDialog = ({ isOpen, onOpenChange, editingUser, addUser, upd
       });
 
       // Opcional: si quieres agregarlo a una lista en tiempo real
-      if (addUser) {
-        addUser(data[0]);
-      }
+     // if (addUser) {
+       // addUser(data[0]);
+      //}
     }
 
     // Limpiar formulario y cerrar modal si todo salió bien
