@@ -2,31 +2,28 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useToast } from '@/components/ui/use-toast';
-import { supabase } from '../../lib/supabaseClient'
+import { supabase } from '../../lib/supabaseClient';
 
 export const UserFormDialog = ({ isOpen, onOpenChange, editingUser, addUser, updateUser }) => {
   const { toast } = useToast();
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
+    nombre_completo: '',
     cedula: '',
-    phone: '',
-    group: ''
+    correo_electronico: '',
+    telefono: '',
+    grupo: ''
   });
 
   useEffect(() => {
     if (editingUser) {
       setFormData({
-        name: editingUser.name,
-        email: editingUser.email,
-        password: editingUser.password,
+        nombre_completo: editingUser.nombre_completo,
         cedula: editingUser.cedula,
-        phone: editingUser.phone,
-        group: editingUser.group || ''
+        correo_electronico: editingUser.correo_electronico,
+        telefono: editingUser.telefono,
+        grupo: editingUser.grupo || ''
       });
     } else {
       resetFormFields();
@@ -35,12 +32,11 @@ export const UserFormDialog = ({ isOpen, onOpenChange, editingUser, addUser, upd
 
   const resetFormFields = () => {
     setFormData({
-      name: '',
-      email: '',
-      password: '',
+      nombre_completo: '',
       cedula: '',
-      phone: '',
-      group: ''
+      correo_electronico: '',
+      telefono: '',
+      grupo: ''
     });
   };
 
@@ -48,51 +44,66 @@ export const UserFormDialog = ({ isOpen, onOpenChange, editingUser, addUser, upd
     onOpenChange(false);
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  if (editingUser) {
-    updateUser(editingUser.id, formData);
-    toast({
-      title: "Usuario actualizado",
-      description: "Los datos del usuario han sido actualizados correctamente.",
-    });
-  } else {
-    const { data, error } = await supabase.from('usuarios').insert([formData]);
+    if (editingUser) {
+      const { error } = await supabase
+        .from('clientes')
+        .update(formData)
+        .eq('id', editingUser.id);
 
-    if (error) {
+      if (error) {
+        toast({
+          title: "Error al actualizar cliente",
+          description: error.message,
+          variant: "destructive"
+        });
+        return;
+      }
+
+      updateUser(editingUser.id, formData);
       toast({
-        title: "Error al crear usuario",
-        description: error.message,
-        variant: "destructive"
+        title: "Cliente actualizado",
+        description: "Los datos del cliente han sido actualizados correctamente.",
       });
-      return;
+    } else {
+      const { data, error } = await supabase.from('clientes').insert([formData]);
+
+      if (error) {
+        toast({
+          title: "Error al crear cliente",
+          description: error.message,
+          variant: "destructive"
+        });
+        return;
+      }
+
+      addUser(data[0]);
+      toast({
+        title: "Cliente creado",
+        description: "El nuevo cliente ha sido creado correctamente.",
+      });
     }
 
-    toast({
-      title: "Usuario creado",
-      description: "El nuevo usuario ha sido creado correctamente.",
-    });
-  }
-
-  handleClose();
-};
+    handleClose();
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="glass-card border-white/10 text-white">
         <DialogHeader>
-          <DialogTitle>{editingUser ? 'Editar Usuario' : 'Crear Nuevo Usuario'}</DialogTitle>
+          <DialogTitle>{editingUser ? 'Editar Cliente' : 'Crear Nuevo Cliente'}</DialogTitle>
           <DialogDescription className="text-gray-400">
-            {editingUser ? 'Modifica los datos del usuario' : 'Completa la información del nuevo usuario'}
+            {editingUser ? 'Modifica los datos del cliente' : 'Completa la información del nuevo cliente'}
           </DialogDescription>
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="name">Nombre Completo</Label>
-              <Input id="name" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} className="bg-white/5 border-white/10 text-white" required />
+              <Label htmlFor="nombre_completo">Nombre Completo</Label>
+              <Input id="nombre_completo" value={formData.nombre_completo} onChange={(e) => setFormData({...formData, nombre_completo: e.target.value})} className="bg-white/5 border-white/10 text-white" required />
             </div>
             <div className="space-y-2">
               <Label htmlFor="cedula">Cédula/NIT</Label>
@@ -102,30 +113,23 @@ const handleSubmit = async (e) => {
           
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Correo Electrónico</Label>
-              <Input id="email" type="email" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} className="bg-white/5 border-white/10 text-white" required />
+              <Label htmlFor="correo_electronico">Correo Electrónico</Label>
+              <Input id="correo_electronico" type="email" value={formData.correo_electronico} onChange={(e) => setFormData({...formData, correo_electronico: e.target.value})} className="bg-white/5 border-white/10 text-white" required />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="phone">Teléfono</Label>
-              <Input id="phone" value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})} className="bg-white/5 border-white/10 text-white" required />
-            </div>
-          </div>
-          
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="password">Contraseña</Label>
-              <Input id="password" type="password" value={formData.password} onChange={(e) => setFormData({...formData, password: e.target.value})} className="bg-white/5 border-white/10 text-white" required />
+              <Label htmlFor="telefono">Teléfono</Label>
+              <Input id="telefono" value={formData.telefono} onChange={(e) => setFormData({...formData, telefono: e.target.value})} className="bg-white/5 border-white/10 text-white" />
             </div>
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="group">Grupo</Label>
-            <Input id="group" value={formData.group} onChange={(e) => setFormData({...formData, group: e.target.value})} className="bg-white/5 border-white/10 text-white" placeholder="Ej: Clientes Premium, VIP, etc." />
+            <Label htmlFor="grupo">Grupo</Label>
+            <Input id="grupo" value={formData.grupo} onChange={(e) => setFormData({...formData, grupo: e.target.value})} className="bg-white/5 border-white/10 text-white" placeholder="Ej: Premium, Regular, etc." />
           </div>
           
           <DialogFooter>
             <Button type="button" variant="outline" onClick={handleClose} className="text-white border-white/20 hover:bg-white/10">Cancelar</Button>
-            <Button type="submit" className="bg-gradient-to-r from-blue-500 to-purple-600 text-white">{editingUser ? 'Actualizar' : 'Crear'} Usuario</Button>
+            <Button type="submit" className="bg-gradient-to-r from-blue-500 to-purple-600 text-white">{editingUser ? 'Actualizar' : 'Crear'} Cliente</Button>
           </DialogFooter>
         </form>
       </DialogContent>
