@@ -31,9 +31,9 @@ const UsersManagement = () => {
 
   const filteredUsers = users.filter(user => {
   const matchesSearch =
-    (user?.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (user?.email || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (user?.cedula || '').includes(searchTerm);
+    (client?.nombre_completo || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (client?.correo_electronico || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (client?.cedula || '').includes(searchTerm);
 
   const matchesRole =
     filterRole === 'all' || user?.role === filterRole;
