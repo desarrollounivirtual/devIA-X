@@ -28,8 +28,7 @@ const Login = () => {
         description: 'Has iniciado sesión correctamente.',
       });
 
-      const role = result.user?.user_metadata?.role || 'client'; // fallback en caso de ausencia de metadatos
-      navigate(role === 'admin' ? '/admin' : '/client');
+      navigate('/dashboard');
     } else {
       toast({
         title: 'Error al iniciar sesión',
