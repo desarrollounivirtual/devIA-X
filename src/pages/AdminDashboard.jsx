@@ -33,12 +33,12 @@ const AdminDashboard = () => {
         }).format(amount);
     };
 
-    const totalClients = users.filter(u => u.role === 'client').length;
+    const totalClients = users.filter(u => u?.role === 'client').length;
     const activeCredits = credits.length;
     const overdueCredits = credits.filter(c => getCreditStatus(c).status === 'overdue').length;
     const totalPayments = payments.length;
-    const totalIncome = payments.reduce((sum, p) => sum + p.amount, 0);
-    const totalReceivable = credits.reduce((sum, c) => sum + (c.amount - (c.paidAmount || 0)), 0);
+    const totalIncome = payments.reduce((sum, p) => sum + (p?.amount || 0), 0);
+    const totalReceivable = credits.reduce((sum, c) => sum + ((c?.amount || 0) - (c?.paidAmount || 0)), 0);
 
     const stats = [
         { icon: Users, label: 'Clientes Registrados', value: totalClients, color: 'text-blue-400' },
