@@ -32,11 +32,11 @@ export const UserFormDialog = ({ isOpen, onOpenChange, editingUser, addUser, upd
 
   const resetFormFields = () => {
   setFormData({
-    name: '',
-    email: '',
+    nombre_completo: '',
+    correo_electronico: '',
     cedula: '',
-    phone: '',
-    group: ''
+    telefono: '',
+    grupo: ''
   });
 };
 
@@ -49,11 +49,11 @@ export const UserFormDialog = ({ isOpen, onOpenChange, editingUser, addUser, upd
   e.preventDefault();
 
   const clienteData = {
-    nombre_completo: formData.name,
-    email: formData.email,
-    telefono: formData.phone,
+    nombre_completo: formData.nombre_completo,
+    correo_electronico: formData.correo_electronico,
+    telefono: formData.telefono,
     cedula: formData.cedula,
-    grupo: formData.group
+    grupo: formData.grupo
   };
 
   try {
