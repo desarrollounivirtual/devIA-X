@@ -33,8 +33,7 @@ const UsersManagement = () => {
   const matchesSearch =
     (client?.nombre_completo || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
     (client?.correo_electronico || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (client?.cedula || '').includes(searchTerm)
-    );
+    (client?.cedula || '').includes(searchTerm);
 });
 
 
