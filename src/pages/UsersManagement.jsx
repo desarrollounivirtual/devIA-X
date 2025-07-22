@@ -155,32 +155,45 @@ const UsersManagement = () => {
               <CardContent>
                 <div className="space-y-4">
                   {filteredUsers.map((user) => (
-                    <div key={user.id} className="flex items-center justify-between p-4 bg-white/5 rounded-lg hover:bg-white/10 transition-all">
-                      <div className="flex items-center space-x-4">
-                        <div className={`w-12 h-12 rounded-full flex items-center justify-center ${user.role === 'admin' ? 'bg-green-500/20 text-green-400' : 'bg-blue-500/20 text-blue-400'}`}>
-                          {user.role === 'admin' ? <UserCheck className="h-6 w-6" /> : <Users className="h-6 w-6" />}
-                        </div>
-                        <div>
-                          <h3 className="font-medium text-white">{user.name}</h3>
-                          <div className="flex items-center space-x-4 text-sm text-gray-400">
-                            <span className="flex items-center"><Mail className="h-3 w-3 mr-1" />{user.email}</span>
-                            <span className="flex items-center"><Phone className="h-3 w-3 mr-1" />{user.phone}</span>
-                            <span>Cédula: {user.cedula}</span>
-                          </div>
-                          <div className="flex items-center space-x-2 mt-1">
-                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${user.role === 'admin' ? 'status-active' : 'status-pending'}`}>
-                              {user.role === 'admin' ? 'Administrador' : 'Cliente'}
-                            </span>
-                            {user.group && (<span className="px-2 py-1 rounded-full text-xs bg-gray-500/20 text-gray-300">{user.group}</span>)}
-                          </div>
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Button variant="outline" size="sm" onClick={() => openEditUserDialog(user)} className="border-white/20 hover:bg-white/10 text-white"><Edit className="h-4 w-4" /></Button>
-                        <Button variant="outline" size="sm" onClick={() => handleDelete(user.id)} className="border-red-500/20 hover:bg-red-500/10 text-red-400"><Trash2 className="h-4 w-4" /></Button>
-                      </div>
-                    </div>
-                  ))}
+  <div key={user.id} className="flex items-center justify-between p-4 bg-white/5 rounded-lg hover:bg-white/10 transition-all">
+    <div className="flex items-center space-x-4">
+      <div className="w-12 h-12 rounded-full flex items-center justify-center bg-blue-500/20 text-blue-400">
+        <Users className="h-6 w-6" />
+      </div>
+      <div>
+        <h3 className="font-medium text-white">{user.nombre_completo}</h3>
+        <div className="flex items-center space-x-4 text-sm text-gray-400">
+          <span className="flex items-center">
+            <Mail className="h-3 w-3 mr-1" />{user.email}
+          </span>
+          <span className="flex items-center">
+            <Phone className="h-3 w-3 mr-1" />{user.telefono}
+          </span>
+          <span>Cédula: {user.cedula}</span>
+        </div>
+        <div className="flex items-center space-x-2 mt-1">
+          <span className="px-2 py-1 rounded-full text-xs font-medium status-pending">
+            Cliente
+          </span>
+          {user.grupo && (
+            <span className="px-2 py-1 rounded-full text-xs bg-gray-500/20 text-gray-300">
+              {user.grupo}
+            </span>
+          )}
+        </div>
+      </div>
+    </div>
+    <div className="flex items-center space-x-2">
+      <Button variant="outline" size="sm" onClick={() => openEditUserDialog(user)} className="border-white/20 hover:bg-white/10 text-white">
+        <Edit className="h-4 w-4" />
+      </Button>
+      <Button variant="outline" size="sm" onClick={() => handleDelete(user.id)} className="border-red-500/20 hover:bg-red-500/10 text-red-400">
+        <Trash2 className="h-4 w-4" />
+      </Button>
+    </div>
+  </div>
+))}
+
                   {filteredUsers.length === 0 && (
                     <div className="text-center py-12">
                       <Users className="h-16 w-16 text-gray-400 mx-auto mb-4" />
