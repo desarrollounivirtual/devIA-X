@@ -28,7 +28,7 @@ const Login = () => {
         description: 'Has iniciado sesión correctamente.',
       });
 
-      navigate('/dashboard');
+      navigate('/admin');
     } else {
       toast({
         title: 'Error al iniciar sesión',
