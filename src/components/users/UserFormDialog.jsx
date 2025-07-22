@@ -31,44 +31,40 @@ export const UserFormDialog = ({ isOpen, onOpenChange, editingUser, addUser, upd
   }, [editingUser, isOpen]);
 
   const resetFormFields = () => {
-    setFormData({
-      nombre_completo: '',
-      cedula: '',
-      correo_electronico: '',
-      telefono: '',
-      grupo: ''
-    });
-  };
+  setFormData({
+    name: '',
+    email: '',
+    cedula: '',
+    phone: '',
+    group: ''
+  });
+};
+
 
   const handleClose = () => {
     onOpenChange(false);
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
+  const clienteData = {
+    nombre_completo: formData.name,
+    email: formData.email,
+    telefono: formData.phone,
+    cedula: formData.cedula,
+    grupo: formData.group
+  };
+
+  try {
     if (editingUser) {
-      const { error } = await supabase
-        .from('clientes')
-        .update(formData)
-        .eq('id', editingUser.id);
-
-      if (error) {
-        toast({
-          title: "Error al actualizar cliente",
-          description: error.message,
-          variant: "destructive"
-        });
-        return;
-      }
-
-      updateUser(editingUser.id, formData);
+      await updateUser(editingUser.id, clienteData);
       toast({
         title: "Cliente actualizado",
         description: "Los datos del cliente han sido actualizados correctamente.",
       });
     } else {
-      const { data, error } = await supabase.from('clientes').insert([formData]);
+      const { data, error } = await supabase.from('clientes').insert([clienteData]);
 
       if (error) {
         toast({
@@ -79,15 +75,29 @@ export const UserFormDialog = ({ isOpen, onOpenChange, editingUser, addUser, upd
         return;
       }
 
-      addUser(data[0]);
       toast({
         title: "Cliente creado",
         description: "El nuevo cliente ha sido creado correctamente.",
       });
+
+      // Opcional: si quieres agregarlo a una lista en tiempo real
+      if (addUser) {
+        addUser(data[0]);
+      }
     }
 
+    // Limpiar formulario y cerrar modal si todo salió bien
+    resetFormFields();
     handleClose();
-  };
+
+  } catch (err) {
+    toast({
+      title: "Error inesperado",
+      description: err.message || "Algo salió mal.",
+      variant: "destructive"
+    });
+  }
+};
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
