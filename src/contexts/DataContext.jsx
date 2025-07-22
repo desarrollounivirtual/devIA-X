@@ -6,12 +6,14 @@ const DataContext = createContext();
 
 export const useData = () => {
   const context = useContext(DataContext);
-  if (!context) throw new Error('useData debe ser usado dentro de DataProvider');
+  if (!context) {
+    throw new Error('useData debe ser usado dentro de DataProvider');
+  }
   return context;
 };
 
 export const DataProvider = ({ children }) => {
-  const [clientes, setUsers] = useState([]);
+  const [users, setUsers] = useState([]);
   const [products, setProducts] = useState([]);
   const [credits, setCredits] = useState([]);
   const [payments, setPayments] = useState([]);
@@ -21,68 +23,50 @@ export const DataProvider = ({ children }) => {
   }, []);
 
   const fetchAllData = async () => {
-    try {
-      const { data: usersData, error: usersError } = await supabase.from('clientes').select('*');
-      const { data: productsData, error: productsError } = await supabase.from('productos').select('*');
-      const { data: creditsData, error: creditsError } = await supabase.from('creditos').select('*');
-      const { data: paymentsData, error: paymentsError } = await supabase.from('pagos').select('*');
+    const { data: usersData } = await supabase.from('users').select('*');
+    const { data: productsData } = await supabase.from('products').select('*');
+    const { data: creditsData } = await supabase.from('credits').select('*');
+    const { data: paymentsData } = await supabase.from('payments').select('*');
 
-      if (usersError) console.error('Error fetching users:', usersError);
-      if (productsError) console.error('Error fetching products:', productsError);
-      if (creditsError) console.error('Error fetching credits:', creditsError);
-      if (paymentsError) console.error('Error fetching payments:', paymentsError);
-
-      setUsers(usersData || []);
-      setProducts(productsData || []);
-      setCredits(creditsData || []);
-      setPayments(paymentsData || []);
-    } catch (error) {
-      console.error('Unexpected error:', error);
-    }
+    setUsers(usersData || []);
+    setProducts(productsData || []);
+    setCredits(creditsData || []);
+    setPayments(paymentsData || []);
   };
 
   const addUser = async (userData) => {
-    const newUser = { ...userData, joinDate: new Date().toISOString() };
-    const { data, error } = await supabase.from('clientes').insert(newUser).select();
-    if (error) {
-      console.error('Error al agregar usuario:', error.message);
-      return null;
-    }
-    setUsers(prev => [...prev, ...data]);
-    return data[0];
+    const newUser = {
+      ...userData,
+      joinDate: new Date().toISOString()
+    };
+    const { data, error } = await supabase.from('users').insert(newUser).select();
+    if (!error) setUsers(prev => [...prev, ...data]);
+    return data?.[0];
   };
 
   const updateUser = async (id, userData) => {
-    const { data, error } = await supabase.from('clientes').update(userData).eq('id', id).select();
-    if (error) return console.error('Error actualizando usuario:', error.message);
+    const { data } = await supabase.from('users').update(userData).eq('id', id).select();
     if (data) setUsers(prev => prev.map(u => u.id === id ? data[0] : u));
   };
 
   const deleteUser = async (id) => {
-    const { error } = await supabase.from('clientes').delete().eq('id', id);
-    if (error) return console.error('Error eliminando usuario:', error.message);
+    await supabase.from('users').delete().eq('id', id);
     setUsers(prev => prev.filter(u => u.id !== id));
   };
 
   const addProduct = async (productData) => {
-    const { data, error } = await supabase.from('productos').insert(productData).select();
-    if (error) {
-      console.error('Error al agregar producto:', error.message);
-      return null;
-    }
-    setProducts(prev => [...prev, ...data]);
-    return data[0];
+    const { data, error } = await supabase.from('products').insert(productData).select();
+    if (!error) setProducts(prev => [...prev, ...data]);
+    return data?.[0];
   };
 
   const updateProduct = async (id, productData) => {
-    const { data, error } = await supabase.from('productos').update(productData).eq('id', id).select();
-    if (error) return console.error('Error actualizando producto:', error.message);
+    const { data } = await supabase.from('products').update(productData).eq('id', id).select();
     if (data) setProducts(prev => prev.map(p => p.id === id ? data[0] : p));
   };
 
   const deleteProduct = async (id) => {
-    const { error } = await supabase.from('productos').delete().eq('id', id);
-    if (error) return console.error('Error eliminando producto:', error.message);
+    await supabase.from('products').delete().eq('id', id);
     setProducts(prev => prev.filter(p => p.id !== id));
   };
 
@@ -91,7 +75,7 @@ export const DataProvider = ({ children }) => {
     return Array.from({ length: installments }).map((_, i) => ({
       installmentNumber: i + 1,
       amount: monthlyPayment,
-      dueDate: addDays(new Date(startDate), i * 30).toISOString(),
+      dueDate: addDays(new Date(startDate), (i + 1) * 30).toISOString(),
       status: 'pending',
       paidAmount: 0,
       paidDate: null
@@ -100,11 +84,6 @@ export const DataProvider = ({ children }) => {
 
   const addCredit = async (creditData) => {
     const product = products.find(p => p.id === creditData.productId);
-    if (!product) {
-      console.error('Producto no encontrado para ID:', creditData.productId);
-      return null;
-    }
-
     const paymentPlan = generatePaymentPlan(
       product.value,
       creditData.installments,
@@ -119,31 +98,28 @@ export const DataProvider = ({ children }) => {
       createdDate: new Date().toISOString()
     };
 
-    const { data, error } = await supabase.from('creditos').insert(newCredit).select();
-    if (error) {
-      console.error('Error al agregar crédito:', error.message);
-      return null;
-    }
-
-    setCredits(prev => [...prev, ...data]);
-    return data[0];
+    const { data, error } = await supabase.from('credits').insert(newCredit).select();
+    if (!error) setCredits(prev => [...prev, ...data]);
+    return data?.[0];
   };
 
   const updateCredit = async (id, creditData) => {
-    const { data, error } = await supabase.from('creditos').update(creditData).eq('id', id).select();
-    if (error) return console.error('Error actualizando crédito:', error.message);
+    const { data } = await supabase.from('credits').update(creditData).eq('id', id).select();
     if (data) setCredits(prev => prev.map(c => c.id === id ? data[0] : c));
   };
 
   const addPayment = async (paymentData) => {
-    const newPayment = { ...paymentData, date: new Date().toISOString() };
+    const newPayment = {
+      ...paymentData,
+      date: new Date().toISOString()
+    };
 
-    const { data, error } = await supabase.from('pagos').insert(newPayment).select();
-    if (error) return console.error('Error agregando pago:', error.message);
+    const { data, error } = await supabase.from('payments').insert(newPayment).select();
+    if (error) return null;
     const payment = data[0];
 
     const credit = credits.find(c => c.id === payment.creditId);
-    if (!credit) return console.error('Crédito no encontrado para el pago');
+    if (!credit) return null;
 
     const updatedPaymentPlan = credit.paymentPlan.map(inst => {
       if (inst.installmentNumber === payment.installmentNumber) {
@@ -158,11 +134,13 @@ export const DataProvider = ({ children }) => {
       return inst;
     });
 
-    await supabase.from('creditos')
+    await supabase.from('credits')
       .update({ paymentPlan: updatedPaymentPlan })
       .eq('id', credit.id);
 
-    setCredits(prev => prev.map(c => c.id === credit.id ? { ...c, paymentPlan: updatedPaymentPlan } : c));
+    setCredits(prev =>
+      prev.map(c => c.id === credit.id ? { ...c, paymentPlan: updatedPaymentPlan } : c)
+    );
     setPayments(prev => [...prev, payment]);
 
     return payment;
@@ -184,7 +162,8 @@ export const DataProvider = ({ children }) => {
     const totalIncome = payments.reduce((sum, p) => sum + p.amount, 0);
 
     const totalToCobrar = credits.reduce((sum, credit) =>
-      sum + credit.paymentPlan.reduce((s, i) => s + (i.amount - i.paidAmount), 0), 0
+      sum + credit.paymentPlan.reduce((s, i) =>
+        s + (i.amount - i.paidAmount), 0), 0
     );
 
     return {
